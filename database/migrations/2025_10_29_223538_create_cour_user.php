@@ -9,13 +9,15 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-     public function up(): void
+    public function up(): void
     {
         Schema::create('cour_user', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('cour_id');
+            $table->foreignId('user_id');
+            $table->foreignId('cour_id');
+            $table->unique(['user_id', 'cour_id']);
             $table->timestamps();
+            
         });
     }
 
