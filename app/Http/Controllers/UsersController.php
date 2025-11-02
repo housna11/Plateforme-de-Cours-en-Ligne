@@ -11,7 +11,7 @@ class UsersController extends Controller
 {
     public function index()
     {
-        return response()->json(User::all(), 200);
+        return response()->json(User::all());
     }
 
     public function store(Request $request)
@@ -28,8 +28,36 @@ class UsersController extends Controller
 
         $user = User::create($validated);
 
-        return response()->json($user, 201);
+        return response()->json($user);
     }
+
+    public function update(Request $request, $id){
+        $user = User::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'sometimes|string',
+            'email' => 'sometimes|email|unique:users,email,' . $id,
+            'password' => 'sometimes|string|min:6',
+            'role' => 'sometimes|in:admin,professeur,etudiant',
+        ]);
+
+        if (isset($validated['password'])) {
+            $validated['password'] = bcrypt($validated['password']);
+        }
+
+        $user->update($validated);
+
+        return response()->json($user);
+    }
+
+    public function destroy($id) {
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return response()->json(['message' => 'Utilisateur supprimé avec succes']);
+    }
+
+    
 
 
     public function etudiant($id)
